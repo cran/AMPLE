@@ -1,0 +1,15 @@
+5758c9f8098ab49ad7a5749f0f68a02a *DESCRIPTION
+7caf82dee6ed4e2074faedbc42697d5a *NAMESPACE
+1f2aa9f7d9fe545bcf44af343c3e32c0 *R/funcs.R
+dadf75d9aae665ec063350e134f60b58 *R/modules.R
+f49af022f53f83741b6dbfc3beae2d4a *R/plots.R
+e734cc5216b4bfd88ac6ecf923537107 *man/AMPED_modules.Rd
+c8b8cde1e37fb2074cf740a6cab7284d *man/comparison_plots.Rd
+0ea6ddcd3afbdf4702e1deb5a5b5300c *man/front_page_plots.Rd
+8017537c04d5f055f95c56c9da845b7b *man/get_time_periods.Rd
+099c88dedbc3ac4a9c260b1f680363ef *man/maintainer_and_licence.Rd
+562c12fdc4e8ddaa1f5276ef622e1e36 *man/performance_indicators.Rd
+de2b91a2867c2606986d9dbbd7d9d536 *man/project_functions.Rd
+aeee50ec68bc6c06f06a909e99ac0592 *man/stock_creators.Rd
+ba76a4238de129a647c2c1ed62b6842d *tests/testthat.R
+639e1774dc3297d2ad375dcf3d6ed2b7 *tests/testthat/test-project.R
