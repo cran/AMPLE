@@ -12,27 +12,31 @@
 #' @import shiny
 
 # A metric fuckton of global variables because the non standard evaluation is absolute cack
-globalVariables(c("X20.", "X5.", "X50.", "X80.", "X95.", "bin", "ffmsyX20.", "ffmsyX50.", "ffmsyX80.", "hcr", "hcrref", "iter", "level", "metric", "msectrl", "period", "piname", "pix", "prop", "sbsbf0X20.", "sbsbf0X50.", "sbsbf0X80.", "upsidedown", "value", "wormid", "x", "xmax", "xmin", "y", "year", "ymin", "."))
+globalVariables(c("X20.", "X5.", "X50.", "X80.", "X95.", "bin", "ffmsymin", "ffmsymed", "ffmsymax",
+                  "hcr", "hcrref", "iter", "level", "metric", "msectrl", "period", "piname", "piname_wrap", "pix", "prop",
+                  "biomassmin", "biomassmed", "biomassmax", "upsidedown", "value", "wormid", "x", "xmax", "xmin", "y", "year", "ymin", "."))
 
 
 # This looks pretty crummy
 
-#' Maintainer and licence information.
+#' Maintainer, licence and SPC about information.
 #'
 #' Show the maintainer and licence for use in the AMPED PIMPLE applications.
+#' Also show the 'About SPC' information.
 #' 
 #' @return A shiny.tag for use in Shiny apps
 #' @rdname maintainer_and_licence
 #' @examples
 #' amped_maintainer_and_licence()
 #' pimple_maintainer_and_licence()
+#' spc_about()
 #' @export
 amped_maintainer_and_licence <- function(){
   out <- tags$html(
     tags$h1("AMPED"),
     tags$p("Amazing Management Procedures Exploration Device"),
     tags$footer(
-      tags$p("version 0.2.0 Drayton Manored"),
+      tags$p("version 0.3.0 My Jampandy"),
       tags$p("Copyright 2019 OFP SPC MSE Team."),
       tags$p("Distributed under the GPL 3"),
       tags$a("Soure code", href="https://github.com/PacificCommunity/ofp-sam-mse-popmodel-Shiny/tree/master/AMPED")
@@ -48,13 +52,27 @@ pimple_maintainer_and_licence <- function(){
     tags$h1("PIMPLE"),
     tags$p("Performance Indicators and Management Procedures Explorer"),
     tags$footer(
-      tags$p("version 0.1.0 Kebab Spider"),
+      tags$p("version 0.2.0 Rupert Trousers"),
       tags$p("Copyright 2019 OFP SPC MSE Team."),
       tags$p("Distributed under the GPL 3")
     )
   )
   return(out)
 }
+
+#' @rdname maintainer_and_licence
+#' @export
+spc_about <- function(){
+  out <- tags$html(
+    tags$p(style="opacity: 0.5", class="caption", align="center", HTML("&copy"), "Pacific Community, 2019"),
+    tags$h1("About us:"),
+    tags$p(align="justify", "The Pacific Community (SPC) is the principal scientific and technical organisation in the Pacific region, proudly supporting development since 1947. It is an international development organisation owned and governed by its 26 country and territory members. The members are: American Samoa, Australia, Cook Islands, Federated States of Micronesia, Fiji, France, French Polynesia, Guam, Kiribati, Marshall Islands, Nauru, New Caledonia, New Zealand, Niue, Northern Mariana Islands, Palau, Papua New Guinea, Pitcairn Islands, Samoa, Solomon Islands, Tokelau, Tonga, Tuvalu, United States of America, Vanuatu, and Wallis and Futuna."),
+    tags$p(align="justify", "In pursuit of sustainable development to benefit Pacific people, this unique organisation works across more than 25 sectors. SPC is renowned for its knowledge and innovation in such areas as fisheries science, public health surveillance, geoscience and conservation of plant genetic resources for food and agriculture."),
+    tags$p(align="justify", "Much of SPC's focus is on major cross-cutting issues, such as climate change, disaster risk management, food security, gender equality, human rights, non-communicable diseases and youth employment. Using a multi-sector approach in responding to its members' development priorities, SPC draws on skills and capabilities from around the region and internationally, and supports the empowerment of Pacific communities and sharing of expertise and skills between countries and territories."),
+    tags$p(align="justify", "With over 600 staff, SPC has its headquarters in Noumea, regional offices in Suva and Pohnpei, a country office in Honiara and field staff in other Pacific locations. Its working languages are English and French. See: ", a("https://www.spc.int", href="www.spc.int"))
+  )
+}
+
 
 # Make the empty reactive stock object
 # The stock object is not reactive, but the elements inside it are (it's like a list)
@@ -493,23 +511,99 @@ get_time_periods <- function(app_params, nyears){
 #'
 #' current_pi_table() takes the processed indicators and formats them into a table.
 #'
-#' @param dat A data.frame with the 20th, 80th and 50th percentile value of each indicator.
-#' @param pichoice A character vector of the indicator names to be included in the table
+#' @param years A character vector of the years in the simulation.
+#' @param piname_choice A character vector of the indicator names to be included in the table.
 #' @rdname performance_indicators
 #' @export
-current_pi_table <- function(dat, pichoice=c("pi1", "sbsbf0", "catch")){
-  out <- subset(dat, period != "Rest" & pi %in% pichoice)
+current_pi_table <- function(dat, app_params, years, percentile_range = c(20,80), piname_choice=c("SB/SBF=0", "Prob. SB>LRP", "Catch", "Relative CPUE", "Catch variability", "Catch stability", "Relative effort", "Relative effort variability", "Relative effort stability", "Proximity to TRP")){
+  out <- subset(dat, period != "Rest" & piname %in% piname_choice)
   signif <- 2
-  out$value <- paste(signif(out$X50., signif), " (", signif(out$X20., signif), ",", signif(out$X80., signif),")", sep="")
+  perc1 <- out[,paste("X",percentile_range[1],".",sep="")]
+  perc2 <- out[,paste("X",percentile_range[2],".",sep="")]
+  out$value <- paste(signif(out$X50., signif), " (", signif(perc1, signif), ",", signif(perc2, signif),")", sep="")
   # Except pi1 as it is a probability
-  pi1value <- signif(out$X50.)
+  pi1value <- signif(out$X50., signif)
   out[out$pi=="pi1","value"] <- pi1value[out$pi=="pi1"]
   out <- out[,c("piname","period","value")]
   out <- tidyr::spread(out, key="period", value="value")
+  # Rorder by piname_choice 
+  out <- out[order(match(out$piname, piname_choice)),]
   rownames(out) <- out$piname
   # Drop rownames column
   out <- out[,colnames(out) != "piname"]
+  # Mess about with colnames by adding year range
+  time_periods <- get_time_periods(app_params, nyears=length(years))
+  period_yrs <- lapply(time_periods, function(x){paste("<br>(",paste(years[x][c(1,length(x))], collapse="-"),")",sep="")})
+  colnames(out)[1] <- paste(colnames(out)[1], " term", period_yrs$short_term, sep="")
+  colnames(out)[2] <- paste(colnames(out)[2], " term", period_yrs$medium_term, sep="")
+  colnames(out)[3] <- paste(colnames(out)[3], " term", period_yrs$long_term, sep="")
   return(out)
+}
+
+#' Routines for calculating and displaying various performance indicators.
+#'
+#' replicate_table() shows the final values for SB/SBF=0, catch and relative CPUE for each replicate.
+#'
+#' @param dat A data.frame with the 20th, 80th and 50th percentile value of each indicator.
+#' @param percentile_range A vector of length with minimum and maximum percentile range to plot.
+#' @rdname performance_indicators
+#' @export
+replicate_table <- function(stock, app_params, stock_params, percentile_range = c(20,80)){
+  final_year <- max(as.numeric(dimnames(stock$biomass)$year))
+
+  # Replicates some of the the get_summaries() function - inefficient
+  sbsbf0 <- stock$biomass[,ncol(stock$biomass) ] / stock_params$k
+  catch <- stock$catch[,ncol(stock$catch)]
+  cpue <- stock$catch / stock$effort
+  rel_cpue <- sweep(cpue, 1, cpue[,app_params$last_historical_timestep], "/")
+  rel_cpue <- rel_cpue[,ncol(rel_cpue)]
+
+  # Get median and percentiles
+  signif <- 2
+  sbsbf0_qs <- signif(quantile(sbsbf0, probs=c(percentile_range[1], 50, percentile_range[2])/100),signif)
+  sbsbf0_summary <- paste(sbsbf0_qs[2], " (", sbsbf0_qs[1], ",", sbsbf0_qs[3], ")", sep="")
+  catch_qs <- signif(quantile(catch, probs=c(percentile_range[1], 50, percentile_range[2])/100), signif)
+  catch_summary <- paste(catch_qs[2], " (", catch_qs[1], ",", catch_qs[3], ")", sep="")
+  rel_cpue_qs <- signif(quantile(rel_cpue, probs=c(percentile_range[1], 50, percentile_range[2])/100), signif)
+  rel_cpue_summary <- paste(rel_cpue_qs[2], " (", rel_cpue_qs[1], ",", rel_cpue_qs[3], ")", sep="")
+
+  # Put together
+  out <- data.frame(Replicate= c(1:length(sbsbf0),"Median and range"), sbsbf0=c(signif(sbsbf0, signif), sbsbf0_summary), Catch=c(signif(catch, signif), catch_summary), rel_cpue=c(signif(rel_cpue, signif), rel_cpue_summary))
+  colnames(out)[2] <- "Final SB/SBF=0"
+  colnames(out)[3] <- "Final catch"
+  colnames(out)[4] <- "Final relative CPUE"
+  return(out)
+}
+
+
+
+
+# The big PI tables for comparing HCRs
+#' pitable
+#'
+#' pitable() is not a plot but a table comparing PIs across HCRs and periods. Only pass in 1 time period at a time.
+#'
+#' @return A data.frame to be shown as a table.
+#' @rdname comparison_plots
+#' @name Comparison plots
+#' @export
+pitable <- function(dat, percentile_range = c(20,80)){
+    # Rows are the PIs, columns are the HCRs
+    signif <- 2
+    percentile_min <- dat[,paste("X",percentile_range[1],".",sep="")]
+    percentile_max <- dat[,paste("X",percentile_range[2],".",sep="")]
+    dat$value <- paste(signif(dat$X50.,signif), " (", signif(percentile_min, signif), ",", signif(percentile_max, signif), ")", sep="")
+    # Fix pi1
+    dat[dat$pi=="pi1", "value"] <- signif(dat[dat$pi=="pi1", "X50."],signif)
+    tabdat <- dat[,c("hcrref", "piname", "value")]
+    tabdat[tabdat$name=="Biomass","piname"] <- "SB/SBF=0"
+    tabdat <- as.data.frame(tidyr::spread(tabdat, key="hcrref", value="value"))
+    # Have rownames?
+    #rnames <- tabdat[,1]
+    #tabdat <- tabdat[,-1]
+    #rownames(tabdat) <- rnames
+    colnames(tabdat)[1] <- "Indicator"
+    return(tabdat)
 }
 
 #-------------------------------------------------------------------
@@ -571,7 +665,7 @@ get_projection_pis <- function(stock, stock_params, app_params, current_timestep
                      "Average effort",
                      "Last SB/SBF=0",
                      "Average SB/SBF=0",
-                     "Prop. SB/SBF=0 > LRP",
+                     "Prop. SB/SBF=0>LRP",
                      "Prop. B > BMSY")
   return(dat)
 }
@@ -647,7 +741,9 @@ next_corrnoise <- function(x, b, sd=0.1){
 #' pisums <- get_summaries(stock=out, stock_params=stock_params, app_params=app_params,
 #'   quantiles=c(0.01,0.05,0.20,0.5,0.80,0.95,0.99))
 #' # Get the current PI table in a neat format from one of the summary tables
-#' current_pi_table(dat=pisums$periodqs, pichoice=c("pi1", "sbsbf0", "catch"))
+#' current_pi_table(dat=pisums$periodqs, app_params=app_params,
+#' years=dimnames(stock$biomass)$year,
+#' piname_choice=c("SB/SBF=0", "Prob. SB>LRP", "Catch"))
 #'
 #' # Get the PIs for the Introduction to Projections app
 #' get_projection_pis(stock=out, stock_params=stock_params, app_params=app_params, current_timestep=15)
@@ -657,32 +753,80 @@ get_summaries <- function(stock, stock_params, app_params, quantiles){
   # yearqs - the quantiles by year
   # periodqs - average over the periods and take quantiles
 
+  # Make these match the PIMPLE indicators
   # SBSBF0
   sbsbf0 <- as.data.frame(stock$biomass / stock_params$k)
   sbsbf0$iter <- 1:nrow(sbsbf0)
   sbsbf0 <- tidyr::gather(sbsbf0, key="year", value="data", -iter, convert=TRUE)
-  sbsbf0 <- cbind(sbsbf0, pi="sbsbf0", piname="SB/SBF=0", upsidedown=FALSE)
+  sbsbf0 <- cbind(sbsbf0, pi="biomass", piname="SB/SBF=0", upsidedown=FALSE)
 
   # Prob SBSBF0 > LRP
   problrp <- dplyr::group_by(sbsbf0, year)
   problrp <- dplyr::summarise(problrp, data=mean(data > stock_params$lrp, na.rm=TRUE))
-  problrp <- cbind(problrp, pi="pi1", piname="Prob. SB > LRP", upsidedown=FALSE, iter=1) # Called pi1 inline with PIMPLE
+  problrp <- cbind(problrp, pi="pi1", piname="Prob. SB>LRP", upsidedown=FALSE, iter=1) # Called pi1 inline with PIMPLE
 
   # Catch
   catch <- as.data.frame(stock$catch)
   catch$iter <- 1:nrow(catch)
   catch <- tidyr::gather(catch, key="year", value="data", -iter, convert=TRUE)
-  catch <- cbind(catch, pi="catch", piname="Catch", upsidedown=FALSE)
-  
-  # Catch var
+  catch <- cbind(catch, pi="pi3", piname="Catch", upsidedown=FALSE)
 
-  # Effort
 
-  # Effort var
+  # CPUE - pi4
+  cpue <- stock$catch / stock$effort
+  rel_cpue <- sweep(cpue, 1, cpue[,app_params$last_historical_timestep], "/")
+  rel_cpue <- as.data.frame(rel_cpue)
+  rel_cpue$iter <- 1:nrow(rel_cpue)
+  rel_cpue <- tidyr::gather(rel_cpue, key="year", value="data", -iter, convert=TRUE)
+  rel_cpue <- cbind(rel_cpue, pi="pi4", piname="Relative CPUE", upsidedown=FALSE)
 
-  # CPUE
+  # Catch var and stab - need drop=FALSE if iter == 1
+  catch_diff <- abs(stock$catch[,2:ncol(stock$catch), drop=FALSE] - stock$catch[,1:(ncol(stock$catch)-1), drop=FALSE])
+  max_catch_diff <- stock_params$k / 10 # For rescale - Has to be same for all stocks - could base it on Cmax-Cmin from HCR control?
+  catch_stab <- (max_catch_diff - catch_diff) / max_catch_diff # rescale
+  catch_stab[catch_stab < 0] <- 0
+  #temp <- cbind(rep(NA, nrow(catch_diff)), catch_diff) # Add extra year?
+  catch_diff <- as.data.frame(catch_diff)
+  catch_diff$iter <- 1:nrow(catch_diff)
+  catch_diff <- tidyr::gather(catch_diff, key="year", value="data", -iter, convert=TRUE)
+  catch_diff <- cbind(catch_diff, pi="pi6", piname="Catch variability", upsidedown=TRUE)
+  catch_stab <- as.data.frame(catch_stab)
+  catch_stab$iter <- 1:nrow(catch_stab)
+  catch_stab <- tidyr::gather(catch_stab, key="year", value="data", -iter, convert=TRUE)
+  catch_stab <- cbind(catch_stab, pi="pi6", piname="Catch stability", upsidedown=FALSE)
 
-  # CPUE var
+  # Relative effort
+  rel_effort <- sweep(stock$effort, 1, stock$effort[,app_params$last_historical_timestep], "/")
+  # Relative effort var
+  rel_effort_diff <- abs(rel_effort[,2:ncol(rel_effort), drop=FALSE] - rel_effort[,1:(ncol(rel_effort)-1), drop=FALSE])
+  # Relative effort stab
+  max_rel_effort_diff <- 1
+  rel_effort_stab <- (max_rel_effort_diff - rel_effort_diff) / max_rel_effort_diff # rescale
+  rel_effort_stab[rel_effort_stab < 0] <- 0
+
+  rel_effort <- as.data.frame(rel_effort)
+  rel_effort$iter <- 1:nrow(rel_effort)
+  rel_effort <- tidyr::gather(rel_effort, key="year", value="data", -iter, convert=TRUE)
+  rel_effort <- cbind(rel_effort, pi="pi20", piname="Relative effort", upsidedown=TRUE)
+
+  rel_effort_diff <- as.data.frame(rel_effort_diff)
+  rel_effort_diff$iter <- 1:nrow(rel_effort_diff)
+  rel_effort_diff <- tidyr::gather(rel_effort_diff, key="year", value="data", -iter, convert=TRUE)
+  rel_effort_diff <- cbind(rel_effort_diff, pi="pi7", piname="Relative effort variability", upsidedown=TRUE)
+
+  rel_effort_stab <- as.data.frame(rel_effort_stab)
+  rel_effort_stab$iter <- 1:nrow(rel_effort_stab)
+  rel_effort_stab <- tidyr::gather(rel_effort_stab, key="year", value="data", -iter, convert=TRUE)
+  rel_effort_stab <- cbind(rel_effort_stab, pi="pi7", piname="Relative effort stability", upsidedown=FALSE)
+
+  # Proximity to TRP
+  sbsbf02 <- as.data.frame(stock$biomass / stock_params$k) # calced again - maybe rethink?
+  max_distance_from_trp <- max(stock_params$trp, 1 - stock_params$trp)
+  prox_trp <- pmax(1.0 - (abs(sbsbf02 - stock_params$trp) / max_distance_from_trp), 0.0)
+  prox_trp <- as.data.frame(prox_trp)
+  prox_trp$iter <- 1:nrow(prox_trp)
+  prox_trp <- tidyr::gather(prox_trp, key="year", value="data", -iter, convert=TRUE)
+  prox_trp <- cbind(prox_trp, pi="pi8", piname="Proximity to TRP", upsidedown=FALSE)
 
   # F / FMSY
   fmsy <- stock_params$r / 2
@@ -694,7 +838,7 @@ get_summaries <- function(stock, stock_params, app_params, quantiles){
 
 
   # Combine all 
-  dat <- rbind(problrp, sbsbf0, catch, ffmsy)
+  dat <- rbind(problrp, sbsbf0, catch, rel_cpue, catch_diff, catch_stab, rel_effort, rel_effort_diff, rel_effort_stab, prox_trp, ffmsy)
 
   # Period table and add to the dat
   years <- dimnames(stock$biomass)$year
