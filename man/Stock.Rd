@@ -51,26 +51,26 @@ The Stock class is used for the Shiny apps in the AMPLE package.
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Stock$new()}}
-\item \href{#method-reset}{\code{Stock$reset()}}
-\item \href{#method-reactive}{\code{Stock$reactive()}}
-\item \href{#method-fill_history}{\code{Stock$fill_history()}}
-\item \href{#method-fill_catch_history}{\code{Stock$fill_catch_history()}}
-\item \href{#method-fill_biomass}{\code{Stock$fill_biomass()}}
-\item \href{#method-as_data_frame}{\code{Stock$as_data_frame()}}
-\item \href{#method-project}{\code{Stock$project()}}
-\item \href{#method-relative_cpue}{\code{Stock$relative_cpue()}}
-\item \href{#method-relative_effort}{\code{Stock$relative_effort()}}
-\item \href{#method-replicate_table}{\code{Stock$replicate_table()}}
-\item \href{#method-time_periods}{\code{Stock$time_periods()}}
-\item \href{#method-performance_indicators}{\code{Stock$performance_indicators()}}
-\item \href{#method-pi_table}{\code{Stock$pi_table()}}
-\item \href{#method-clone}{\code{Stock$clone()}}
+\item \href{#method-Stock-new}{\code{Stock$new()}}
+\item \href{#method-Stock-reset}{\code{Stock$reset()}}
+\item \href{#method-Stock-reactive}{\code{Stock$reactive()}}
+\item \href{#method-Stock-fill_history}{\code{Stock$fill_history()}}
+\item \href{#method-Stock-fill_catch_history}{\code{Stock$fill_catch_history()}}
+\item \href{#method-Stock-fill_biomass}{\code{Stock$fill_biomass()}}
+\item \href{#method-Stock-as_data_frame}{\code{Stock$as_data_frame()}}
+\item \href{#method-Stock-project}{\code{Stock$project()}}
+\item \href{#method-Stock-relative_cpue}{\code{Stock$relative_cpue()}}
+\item \href{#method-Stock-relative_effort}{\code{Stock$relative_effort()}}
+\item \href{#method-Stock-replicate_table}{\code{Stock$replicate_table()}}
+\item \href{#method-Stock-time_periods}{\code{Stock$time_periods()}}
+\item \href{#method-Stock-performance_indicators}{\code{Stock$performance_indicators()}}
+\item \href{#method-Stock-pi_table}{\code{Stock$pi_table()}}
+\item \href{#method-Stock-clone}{\code{Stock$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Stock-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new stock object, with fields of the right dimension and NA values (by calling the \code{reset()} method.
 See the \code{reset()} method for more details.
@@ -94,8 +94,8 @@ A new Stock object.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reset"></a>}}
-\if{latex}{\out{\hypertarget{method-reset}{}}}
+\if{html}{\out{<a id="method-Stock-reset"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-reset}{}}}
 \subsection{Method \code{reset()}}{
 Resets an existing stock object, by remaking all fields (possibly with different dimensions for the array fields) .
 Fills up the catch, effort and biomass fields in the historical period based on the stock history and
@@ -121,8 +121,8 @@ A new Stock object.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reactive"></a>}}
-\if{latex}{\out{\hypertarget{method-reactive}{}}}
+\if{html}{\out{<a id="method-Stock-reactive"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-reactive}{}}}
 \subsection{Method \code{reactive()}}{
 Method to create a reactive instance of a Stock.
 \subsection{Usage}{
@@ -134,8 +134,8 @@ a reactiveExpr.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-fill_history"></a>}}
-\if{latex}{\out{\hypertarget{method-fill_history}{}}}
+\if{html}{\out{<a id="method-Stock-fill_history"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-fill_history}{}}}
 \subsection{Method \code{fill_history()}}{
 Fills the historical period of the stock
 \subsection{Usage}{
@@ -153,8 +153,8 @@ Fills the historical period of the stock
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-fill_catch_history"></a>}}
-\if{latex}{\out{\hypertarget{method-fill_catch_history}{}}}
+\if{html}{\out{<a id="method-Stock-fill_catch_history"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-fill_catch_history}{}}}
 \subsection{Method \code{fill_catch_history()}}{
 Fill up the historical period of catches with random values to simulate a catch history
 \subsection{Usage}{
@@ -172,8 +172,8 @@ Fill up the historical period of catches with random values to simulate a catch 
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-fill_biomass"></a>}}
-\if{latex}{\out{\hypertarget{method-fill_biomass}{}}}
+\if{html}{\out{<a id="method-Stock-fill_biomass"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-fill_biomass}{}}}
 \subsection{Method \code{fill_biomass()}}{
 Fills the biomass in the next timestep based on current biomass and catches
 The surplus production model has the general form:
@@ -197,8 +197,8 @@ Here p is fixed at 1 to give a Schaefer model
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-as_data_frame"></a>}}
-\if{latex}{\out{\hypertarget{method-as_data_frame}{}}}
+\if{html}{\out{<a id="method-Stock-as_data_frame"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-as_data_frame}{}}}
 \subsection{Method \code{as_data_frame()}}{
 Produces a data.frame of some of the array-based fields, like biomass.
 Just used for testing purposes.
@@ -208,8 +208,8 @@ Just used for testing purposes.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-project"></a>}}
-\if{latex}{\out{\hypertarget{method-project}{}}}
+\if{html}{\out{<a id="method-Stock-project"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-project}{}}}
 \subsection{Method \code{project()}}{
 Projects the stock over the time steps given and updates the biomass, HCR ip / op and catches
 It uses a simple biomass dynamic model where the catches or fishing effort are set every time step by the harvest control rule.
@@ -233,8 +233,8 @@ A stock object (a reactiveValues object with bits for the stock)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-relative_cpue"></a>}}
-\if{latex}{\out{\hypertarget{method-relative_cpue}{}}}
+\if{html}{\out{<a id="method-Stock-relative_cpue"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-relative_cpue}{}}}
 \subsection{Method \code{relative_cpue()}}{
 The catch per unit effort (CPUE, or catch rate) relative to the CPUE in the last historical period.
 \subsection{Usage}{
@@ -246,8 +246,8 @@ An array of same dims as the catch and effort fields.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-relative_effort"></a>}}
-\if{latex}{\out{\hypertarget{method-relative_effort}{}}}
+\if{html}{\out{<a id="method-Stock-relative_effort"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-relative_effort}{}}}
 \subsection{Method \code{relative_effort()}}{
 The effort relative to the effort in the last historical period.
 \subsection{Usage}{
@@ -259,8 +259,8 @@ An array of same dims as the effort field.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-replicate_table"></a>}}
-\if{latex}{\out{\hypertarget{method-replicate_table}{}}}
+\if{html}{\out{<a id="method-Stock-replicate_table"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-replicate_table}{}}}
 \subsection{Method \code{replicate_table()}}{
 Summarises the final year of each iteration. Only used for the Measuring Performance app.
 \subsection{Usage}{
@@ -278,8 +278,8 @@ Summarises the final year of each iteration. Only used for the Measuring Perform
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-time_periods"></a>}}
-\if{latex}{\out{\hypertarget{method-time_periods}{}}}
+\if{html}{\out{<a id="method-Stock-time_periods"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-time_periods}{}}}
 \subsection{Method \code{time_periods()}}{
 Calculates the short, medium and long term periods to calculate the performance indicators over,
 based on the last historic year of data and the number of years in the projection.
@@ -289,8 +289,8 @@ based on the last historic year of data and the number of years in the projectio
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-performance_indicators"></a>}}
-\if{latex}{\out{\hypertarget{method-performance_indicators}{}}}
+\if{html}{\out{<a id="method-Stock-performance_indicators"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-performance_indicators}{}}}
 \subsection{Method \code{performance_indicators()}}{
 Gets the performance indicators across all indicators, for three time periods.
 Used in the Measuring Performance and Comparing Performance apps.
@@ -315,8 +315,8 @@ A data.frame
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-pi_table"></a>}}
-\if{latex}{\out{\hypertarget{method-pi_table}{}}}
+\if{html}{\out{<a id="method-Stock-pi_table"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-pi_table}{}}}
 \subsection{Method \code{pi_table()}}{
 Makes a table of the performance indicators.
 \subsection{Usage}{
@@ -334,8 +334,8 @@ Makes a table of the performance indicators.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Stock-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Stock-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -12,16 +12,15 @@ them.
 
 The three apps are:
 
--   *Introduction to HCRs* provides a simple overview to how HCRs work.
-    Users are able to select their own HCR and step through its
-    performance, year by year. Biological variability and estimation
-    error are introduced.
--   *Measuring performance* builds on the previous app and introduces
-    the idea of using performance indicators to evaluate HCR
-    performance.
--   *Comparing performance* allows multiple HCRs to be created and
-    tested, and their performance compared so that the preferred HCR can
-    be selected.
+- *Introduction to HCRs* provides a simple overview to how HCRs work.
+  Users are able to select their own HCR and step through its
+  performance, year by year. Biological variability and estimation error
+  are introduced.
+- *Measuring performance* builds on the previous app and introduces the
+  idea of using performance indicators to evaluate HCR performance.
+- *Comparing performance* allows multiple HCRs to be created and tested,
+  and their performance compared so that the preferred HCR can be
+  selected.
 
 ## Installation
 
@@ -33,11 +32,11 @@ install.packages("AMPLE")
 ```
 
 Alternatively, you can get the latest version from the GitHub repository
-[here](https://github.com/PacificCommunity/ofp-sam-amped/tree/master/AMPLE)
-by installing it with the *devtools* package.
+[here](https://github.com/PacificCommunity/ofp-sam-ample//) by
+installing it with the *devtools* package.
 
 ``` r
-devtools::install_github("PacificCommunity/ofp-sam-amped/tree/master/AMPLE")
+devtools::install_github("PacificCommunity/ofp-sam-ample")
 ```
 
 ## Usage
@@ -64,9 +63,9 @@ comparing_performance()
 
 The apps are also hosted online at:
 
--   <https://ofp-sam.shinyapps.io/AMPLE-intro-hcr/>
--   <https://ofp-sam.shinyapps.io/AMPLE-measuring-performance/>
--   <https://ofp-sam.shinyapps.io/AMPLE-comparing-performance/>
+- <https://ofp-sam.shinyapps.io/AMPLE-intro-hcr/>
+- <https://ofp-sam.shinyapps.io/AMPLE-measuring-performance/>
+- <https://ofp-sam.shinyapps.io/AMPLE-comparing-performance/>
 
 ## Vignettes
 

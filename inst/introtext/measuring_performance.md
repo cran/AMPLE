@@ -1,8 +1,10 @@
-[//]: # (Information and instructions for the Measuring Performance app)
-[//]: # (measuring_performance.md)
-[//]: # (Author: Finlay Scott (SPC) <finlays@spc.int>)
-[//]: # (Soundtrack: I Sometimes Dream of Glue by Luke Haines)
-[//]: # (Distributed under the terms of the GNU General Public License GPL (>= 3))
+<!--
+Information and instructions for the Measuring Performance app
+measuring_performance.md
+Author: Finlay Scott (SPC) <finlays@spc.int>
+Soundtrack: I Sometimes Dream of Glue by Luke Haines
+Distributed under the terms of the GNU General Public License GPL (>= 3)
+-->
 
 # Measuring performance
 

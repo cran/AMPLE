@@ -1,8 +1,10 @@
-[//]: # (Information and instructions for the Comparing Performance app)
-[//]: # (comparing_performance.md)
-[//]: # (Author: Finlay Scott (SPC) <finlays@spc.int>)
-[//]: # (Soundtrack: Assassin's Creed 4: Black Flag (Original Game Soundtrack) by Brian Tyler)
-[//]: # (Distributed under the terms of the GNU General Public License GPL (>= 3))
+<!--
+Information and instructions for the Comparing Performance app
+comparing_performance.md
+Author: Finlay Scott (SPC) <finlays@spc.int>
+Soundtrack: Assassin's Creed 4: Black Flag (Original Game Soundtrack) by Brian Tyler
+Distributed under the terms of the GNU General Public License GPL (>= 3)
+-->
 
 # Comparing the performance of HCRs
 

@@ -16,19 +16,6 @@
 
 <title>Measuring the performance of harvest control rules (HCRs)</title>
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -38,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -121,13 +109,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -354,16 +349,16 @@ We explore comparing PIs in the third tutorial.</p>
 <p>Fisheries management is affected by many sources of uncertainty, including uncertainty about the biology of the stock and the stock status.
 It is very important to understand how an HCR performs under uncertainty.
 Therefore, the HCR evaluations have to consider different sources of uncertainty.</p>
-<p>In this tutorial we start to look at how PIs can be used to measure the performance of a HCR.
+<p>In this tutorial we start to look at how PIs can be used to measure the performance of an HCR.
 Particular attention is paid to how uncertainty can be included in the evaluations and the effect it can have on the PI values.</p>
-<p>To evaluate the impact of uncertainty on the performance of an HCR, many projections are performed (sometimes hundreds).
+<p>To evaluate the impact of uncertainty on the performance of an HCR, many projections are performed (sometimes hundreds or even more).
 Each projection is known as a <em>replicate</em>.
 The PIs are calculated for each replicate and summaries, such as average values and ranges, are presented.</p>
-<p><strong>Note</strong> that the fishery used in this tutorial is not based on a particular fishery or stock.
+<p><strong>Note</strong> that the fishery used in this tutorial is not based on a real world fishery or stock.
 It’s just a toy example.</p>
 <p><strong>Important note about management procedures</strong>.
 An HCR is part of a management procedure (MP), along with two other elements: the data collection and the estimation process.
-Under the harvest strategy approach, when an MP is agreed and adopted by stakeholders all three elements of the MP are agreed together.
+Under a harvest strategy approach, when an MP is agreed and adopted by stakeholders all three elements of the MP are agreed together.
 In this tutorial, and in the app, we assume that the data collection and estimation process are the same for each HCR that we try.
 When we talk about comparing HCRs we are really comparing MPs.</p>
 </div>
@@ -381,10 +376,12 @@ When we talk about comparing HCRs we are really comparing MPs.</p>
 Figure 2.1: The opening screen of the ‘Measuring performance’ app.
 </p>
 </div>
-<p>On the left-side of the main panel there are time series plots of catch and biomass, similar to those seen in the <em>Introduction to HCRs</em> app (ignore the vertical dashed lines in the plots for now).</p>
-<p>There is also a new plot for <em>relative CPUE</em>. CPUE is the catch-per-unit of effort, sometimes known as catch rate.
+<p>On the left side of the main panel there are three time series plots.
+Two of them, catch and biomass, are similar to those seen in the <em>Introduction to HCRs</em> app (ignore the vertical dashed lines in the plots for now).</p>
+<p>The third time series plot is a new plot of <em>relative CPUE</em>. CPUE is the catch-per-unit of effort, sometimes known as catch rate.
 The relative CPUE plot is the CPUE relative to the CPUE in the final historical year, 2019.
-The value in 2019 is therefore 1.</p>
+The value in 2019 is therefore 1.
+By making the CPUE relative to some point in the past, it can be easier to interpret.</p>
 <p>These three plots have 10 years of historical data, from 2010 to 2019.
 There is an additional year of data for biomass as it shows the biomass at the start of the year.</p>
 <p>The horizontal dashed lines on the biomass plot are the Target Reference Point (TRP - 0.5) and Limit Reference Point (LRP - 0.2).</p>
@@ -393,9 +390,9 @@ Scaling the biomass between 0 and 1 can make it easier to understand if the stoc
 <p>The HCR is shown at the top of the right-hand panel. The HCR is the red line.</p>
 <p>Underneath the HCR plot is something about <strong>Table selection</strong>. The option <strong>Each replicate</strong> should be selected.
 At the moment there is no table…</p>
-<p>In the left-hand panel there are various controls, including the HCR parameters.
+<p>In the left-hand panel there are various controls, including the HCR parameters, similar to those seen in the <em>Introduction to HCRs</em> app.
 The initial values of the HCR parameters should be: <em>Blim</em> = 0.2, <em>Belbow</em> = 0.5, <em>Cmin</em> = 10 and <em>Cmax</em> = 140.
-If they are not you can set them using the controls in the left panel.
+If they are not you can set them using the controls.
 This HCR is known as <em>HCR 1</em>.</p>
 <p>Note that your plots might look slightly different due to variations in the historic catches.</p>
 </div>
@@ -419,7 +416,7 @@ The HCR was applied in each year of the projection and the HCR plot has blue poi
 Each projection is known as a replicate.</p>
 <p>A table should have appeared underneath the <strong>Table selection</strong> control.
 This table shows the values of <em>Biomass</em>, <em>Catch</em> and <em>Relative CPUE</em> in the final year of the projection.
-We will use these as performance indicators to evaluate the performance of HCRs.</p>
+We will use these as performance indicators (PIs) to evaluate the performance of HCRs.</p>
 <p>The table has two rows. The top row gives the average value over all the replicates we have run, as well as the range of values (in brackets) in which <em>most</em> of the replicates have fallen into (strictly speaking it contains 90% of the full range of values).
 So far we have only run 1 replicate so this first row is not very useful right now.
 The results for our first replicate are shown in the second row of the table.
@@ -447,7 +444,8 @@ Note that there is nothing special about the value of 0.2, it just gives enough 
 <p>Keep the HCR parameters the same as before.</p>
 <p>Click <strong>Run projection</strong> to project over the full time series.
 As we now have variability in the biological dynamics you should see that the plots are bumpy (Figure <a href="#fig:hcr12">4.1</a>).
-This bumpiness is caused by the variability in the biological growth processes and through uncertainty in the stock status that is used to drive the HCR.</p>
+This bumpiness is caused by the variability in the biological growth processes which causes variability in the stock status (the biomass).
+The HCR responds to the variability in the stock status by setting variable catches.</p>
 <p>A new row will also have appeared in the replicate table that records the final values of biomass, catch and relative CPUE.
 These values should be different to when we ran the projections with no uncertainty.</p>
 <div class="figure"><span style="display:block;" id="fig:hcr12"></span>
@@ -458,18 +456,18 @@ Figure 4.1: The result from running a single projection with biological variabil
 </div>
 <p>Click <strong>Run projection</strong> again. You should get another line on the plots.
 The new line is different to the previous one (the previous one is now in grey, the new one in black).
-The difference is caused by the biological variability.</p>
+The difference between the replicates is caused by the biological variability.</p>
 <p>Another row will also have appeared in the table to record the final values of this replicate.
 The final values of this second replicate will be different to the values of the first replicate.
-The average and range row at the top of the table will have been updated.</p>
+The summary row at the top of the table will have been updated.</p>
 <p>This second projection has <em>exactly</em> the same stock and the same HCR as the first one but the outcome is slightly different.
 The difference is a result of the uncertainty in the biological dynamics.
 It is important to understand why they are different.
 There is a lot of natural variability in fish stocks, for example with recruitment, and it is impossible for scientists and managers to predict exactly what will happen in the future.
 To help understand the <em>possible</em> futures, variability is included in the biological dynamics to simulate the uncertainty.</p>
 <p>By running many projections with uncertainty we will get slightly different results.
-Looking at all of the results gives us understanding of what might happen.
-This more useful than running a single projection with no uncertainty.</p>
+Looking at all of the results together gives us more understanding of what might happen.
+This is more useful than running a single projection with no uncertainty.</p>
 <p>Keep clicking <strong>Run projection</strong> until you have 10 replicates (Figure <a href="#fig:hcr110">4.2</a>).
 More lines will appear on the plots and more rows will appear in the table.
 Each line will be different because each projection is different due to the biological variability.</p>
@@ -480,23 +478,25 @@ Figure 4.2: The result from running 10 replicates with biological variability wi
 </p>
 </div>
 <p>Keep clicking <strong>Run projection</strong> until you get 30 or more replicates.
-You will see that, eventually, the average and range values in the first row of the table will not change so much with each new projection.
-This means that we are starting to understand the <em>distribution of expected values</em> from this HCR, i.e. we don’t know exactly what will happen in the future, but we think it will lie within that range.</p>
+You will see that, eventually, the average and range values in the first row of the table do not change by much with each new projection.
+This indicates that we are starting to understand the <em>distribution of expected values</em> from this HCR.
+Even though we don’t know exactly what will happen in the future, we think we know the range of values that it will fall within.</p>
 <p>This is very important when it comes to selecting a HCR for a fishery.
 An HCR must be robust to uncertainty, otherwise it will not perform as well as expected.</p>
 <p>When you get to 50 or more replicates (if you click that many times…), the grey lines on the plots will be replaced by grey ribbons.
-The width of the grey ribbons range summarises the range of most of the grey lines (again, 90% of the full range - the same as the first row in the table).
+The width of the grey ribbons summarises the range of most of the replicates that have been run (again, 90% of the full range - the same as the first row in the table).
 Using the ribbons is neater than having loads of lines on a plot.
 The average value and the last replicate is plotted over the ribbon for illustration purposes.</p>
-<p>When the range of values has approximately settled down and doesn’t change much as we run more projections, we can start to think about what might happen in the future.</p>
+<p>When the range of values has approximately settled down and doesn’t change much as more projections are run, we can start to think about what might happen in the future.</p>
 <p>The range of values in the plots and in the first row of the table tells us how certain we are about the future.
 We think that the possible <em>real</em> future will be somewhere within this range.
 If the range is wide, then there is a wide spread of values and we are not certain about what will happen.
 If the range is narrow then we have more confidence in what we think will happen.</p>
 <p>Considering the range of values is important because sometimes it is better to choose an HCR about which we have more certainty in the future, even though the expected catches might be lower.
+For example, the average value of catches might be lower, but the range of possible values is small.
 This helps with management and planning and might be more useful than having an HCR that <em>might</em> give a high future catch but also <em>might</em> give a low future catch.</p>
 <p>These types of projections with uncertainty are different to running a single projection with no uncertainty (known as a <em>deterministic</em> projection).
-If we want to understand how uncertainty may affect the performance of a HCR in the real world, running a deterministic projection is not enough.</p>
+If we want to understand how uncertainty may affect the performance of an HCR in the real world, running a deterministic projection is not enough.</p>
 </div>
 <div id="measuring-performance-exercise" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Measuring performance: exercise</h1>
@@ -506,7 +506,7 @@ Use the same HCR parameters as above (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.5
 This HCR is known as <em>HCR 1</em>
 Use the same uncertainty setttings as above (<em>Biological variability</em> = 0.2, <em>Estimation variability</em> = 0, <em>Estimation bias</em> = 0).</p>
 <p>Run 30 replicates by pressing the <strong>Run projection</strong> button 30 times.</p>
-<p>Looking at the top row of the table and write down the average value and the range (the values in the brackets) of biomass, catch and relative CPUE in the final year.</p>
+<p>Look at the top row of the table and write down the average value and the range (the values in the brackets) of biomass, catch and relative CPUE in the final year.</p>
 <p>For example, having just run this on my machine, for biomass I get an average value of 0.41 with a range of 0.33 and 0.45.
 This means that the <em>most likely</em> final value of biomass will be 0.41, but the range of possible values is from 0.33 to 0.45.</p>
 <p>Now try a different HCR.
@@ -521,7 +521,7 @@ CPUE  0.43 (0.34, 0.46)
 -->
 <p>Finally, do the same thing for <em>HCR 3</em>: <em>Blim</em> = 0.2, <em>Belbow</em> = 0.7, <em>Cmin</em> = 10 and <em>Cmax</em> = 150.</p>
 <table>
-<caption><span id="tab:results">Table 5.1: </span> Results from testing the three HCRs. After running a 30 replicates, enter the average and range of values (the values in brackets) of the biomass, catch and relative CPUE in the final year.</caption>
+<caption><span id="tab:results">Table 5.1: </span> Results from testing the three HCRs. After running 30 replicates, enter the average and range of values (the values in brackets) of the biomass, catch and relative CPUE in the final year.</caption>
 <thead>
 <tr class="header">
 <th align="right">HCR</th>
@@ -558,14 +558,14 @@ CPUE  0.43 (0.34, 0.46)
 </div>
 <div id="introducing-performance-indicators" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Introducing performance indicators</h1>
-<p>In the exercise above, we compared the values of catch, biomass and relative CPUE in the final year.
-We used these metrics as <em>Performance Indicators</em> (PIs) to evaluate the performance of the three HCRs.</p>
+<p>In the exercise above we compared the values of catch, biomass and relative CPUE in the final year.
+We used these metrics as <em>performance indicators</em> (PIs) to evaluate the performance of the three HCRs.</p>
 <p>Lots of different PIs are available that measure different things.
 For example, PIs can measure catch levels, changes in effort, the probability of biomass being above the Limit Reference Point (LRP) etc.</p>
 <p>When comparing HCRs, the chosen PIs should relate to the management objectives for the fishery.
 This allows you to measure how well the fishery is performing in relation to those objectives.
 Some HCRs will perform well for some PIs and poorly for others.
-This is where the ideas of prioritising PIs and evaluating trade-offs between them come in.</p>
+This is where the idea of prioritising PIs and evaluating trade-offs between them comes in.</p>
 <p>In the previous exercise we only looked at what happens in the final year of the projection.
 We have not considered what happens during the course of the projection.
 When comparing HCRs we should also compare what happens in the short- and medium-term as well as the long-term.</p>
@@ -591,7 +591,7 @@ These time periods can be seen on the time series plots of catch, biomass and re
 </tr>
 <tr class="even">
 <td align="left">Probability of being above the LRP</td>
-<td align="left">This reflects the of risk of the stock being overfished.</td>
+<td align="left">This reflects the risk of the stock being overfished.</td>
 </tr>
 <tr class="odd">
 <td align="left">Catch</td>
@@ -611,7 +611,7 @@ These time periods can be seen on the time series plots of catch, biomass and re
 </tr>
 <tr class="odd">
 <td align="left">Proximity to the TRP</td>
-<td align="left">How close the biomass is to the TRP on average. A value of 1 means that the biomass is always at the TRP. A low value, close to 0, means that the biomass spends a lot of time being much higher, or lower, than the TRP.</td>
+<td align="left">How close the biomass is to the TRP on average. A value of 1 means that the biomass is always at the TRP. A lower value means that the biomass spends a lot of time being higher, or lower, than the TRP.</td>
 </tr>
 </tbody>
 </table>
@@ -652,11 +652,11 @@ Different HCRs will perform better over different time periods and this will aff
 <p>We are going to look at some PIs to help us choose between the three HCRs we looked at above.</p>
 <p>The three HCRs are:</p>
 <ul>
-<li>HCR 1 (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.5, <em>Cmin</em> = 10 and <em>Cmax</em> = 140),</li>
+<li>HCR 1 (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.5, <em>Cmin</em> = 10 and <em>Cmax</em> = 140)</li>
 <li>HCR 2 (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.3, <em>Cmin</em> = 10 and <em>Cmax</em> = 130)</li>
-<li>HCR 3 (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.7, <em>Cmin</em> = 10 and <em>Cmax</em> = 150).</li>
+<li>HCR 3 (<em>Blim</em> = 0.2, <em>Belbow</em> = 0.7, <em>Cmin</em> = 10 and <em>Cmax</em> = 150)</li>
 </ul>
-<p>To do this we are going to record the values for only three of the PIs: <em>Catch</em>, <em>Catch stability</em> and <em>Prob. &gt; LRP</em>, in the three different time periods, in the table below (Table <a href="#tab:results2">8.1</a>).
+<p>To keep things simple we are going to record the values for only three of the PIs: <em>Catch</em>, <em>Catch stability</em> and <em>Prob. &gt; LRP</em>, in the three different time periods, in the table below (Table <a href="#tab:results2">8.1</a>).
 Use the same uncertainty settings as above (<em>Biological variability</em> = 0.2, <em>Estimation variability</em> = 0, <em>Estimation bias</em> = 0).</p>
 <p>For each HCR, run 50 iterations (by pressing <strong>Run projection</strong> 50, yes 50, times).
 I’ve included a line of the results that I got as an example.</p>

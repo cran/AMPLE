@@ -1,8 +1,10 @@
-[//]: # (Information and instructions for the Introduction to HCRs app)
-[//]: # (intro_hcr.md)
-[//]: # (Author: Finlay Scott (SPC) <finlays@spc.int>)
-[//]: # (Soundtrack: Dear Esther (Original Game Soundtrack) by Jessica Curry)
-[//]: # (Distributed under the terms of the GNU General Public License GPL (>= 3))
+<!--
+Information and instructions for the Introduction to HCRs app
+intro_hcr.md
+Author: Finlay Scott (SPC) <finlays@spc.int>
+Soundtrack: Dear Esther (Original Game Soundtrack) by Jessica Curry
+Distributed under the terms of the GNU General Public License GPL (>= 3)
+-->
 
 # Harvest Control Rules
 

@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
   echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'
 )
 
-## ----plothcr, fig.cap="A threshold-catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section).", fig.width=8, fig.height=6----
+## ----plothcr, fig.cap="A threshold catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section).", fig.width=8, fig.height=6----
   xrange <- c(0, 1)
   yrange <- c(0, 150)
   xlab <- "Estimated stock biomass"

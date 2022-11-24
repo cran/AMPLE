@@ -16,19 +16,6 @@
 
 <title>Introduction to Harvest Control Rules (HCRs)</title>
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -38,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -121,13 +109,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -341,38 +336,39 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1><span class="header-section-number">1</span> Introduction to HCRs</h1>
 <p>This tutorial is a quick introduction to Harvest Control Rules (HCRs) and their use in fisheries management.
 It uses the <em>Introduction to HCRs</em> Shiny app from the <em>AMPLE</em> package.
-There are three apps in the <em>AMPLE</em> package. This is the first one and is the one you should start with if you are unsure what a HCR is.</p>
-<p>In this tutorial we will cover what an HCR is, how they operate, and start to think about the impact of uncertainty on performance.</p>
-<p><strong>Note</strong> that the fishery used in this tutorial is not based on a particular fishery or stock.
+There are three apps in the <em>AMPLE</em> package. This is the first one and is the one you should start with if you are unsure what an HCR is.</p>
+<p>In this tutorial we will cover what an HCR is, how they operate, and start to think about the impact of uncertainty on HCR performance.</p>
+<p><strong>Note</strong> that the fishery used in this tutorial is not based on a real world fishery or stock.
 It’s just a toy example.</p>
 </div>
 <div id="what-is-an-hcr" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> What is an HCR</h1>
+<h1><span class="header-section-number">2</span> What is an HCR?</h1>
 <p>An HCR is a pre-agreed decision rule that is used to set fishing opportunities in the future.
-The rule is agreed by stakeholders and managers of that fishery and form part of a fisheries <em>harvest strategy</em>.</p>
+The rule is agreed by stakeholders and managers of that fishery.</p>
 <p>An HCR should be designed so that the management objectives of the fishery have the greatest chance of being achieved.
-As the real-world can be a very uncertain place, a good HCR is robust to different sorts of uncertainty (which we will discuss later on).</p>
+As the real world can be a very uncertain place, a good HCR is robust to different sorts of uncertainty (which we will discuss later on).</p>
 <p>In this tutorial we will use a simple HCR to set the catch limit of a fishery in every year.
-The HCR uses an estimate of the current stock biomass to set a catch limit in the next year
+The HCR uses estimates of the current stock biomass to set that catch limit
 (HCRs can use information other than stock biomass but we will keep things simple for now)
 This rule will be applied every year in the future to set new catch limits in each year.</p>
 <p><strong>Note</strong> that in this app the biomass is scaled between 0 and 1, where 0 means there is no biomass (a bad thing) and 1 is the amount of biomass when is there is no fishing, i.e. the highest it can be.
-Scaling the biomass between 0 and 1 can make it easier to understand if the stock is over or underexploited.</p>
+Scaling the biomass between 0 and 1 like this can make it easier to understand if the stock is over or underexploited.</p>
 <p>HCRs can have different basic shapes.
-In this tutorial we will use a shape called a <em>threshold catch</em>. This is sometimes known as a hockey stick.
+In this tutorial we will use a shape called a <em>threshold catch</em>. This is sometimes known as a ‘hockey stick’.
 The catch limit is set according to the general rule shown in Figure <a href="#fig:plothcr">2.1</a>.</p>
 <div class="figure"><span style="display:block;" id="fig:plothcr"></span>
-<img src="data:image/png;base64,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" alt="A threshold-catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section)." width="100%" />
+<img src="data:image/png;base64,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" alt="A threshold catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section)." width="100%" />
 <p class="caption">
-Figure 2.1: A threshold-catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section).
+Figure 2.1: A threshold catch shape HCR. The shape is defined by four parameters: Cmin and Cmax (which determine the minimum and maximum catch limit) and Blim and Belbow (which determine the start and stop of sloping section).
 </p>
 </div>
-<p>The current stock biomass level is on x-axis along the bottom.
+<p>The current stock biomass level is on x-axis along the bottom of the plot.
 The catch limit that will be set in the next year is on the y-axis on the side.
 The red line is the rule that sets the catch limit given the estimated stock biomass.</p>
 <p>The basic idea is that if stock biomass is low the catch limit is low, and if the stock biomass is high the catch limit is high.
 By pre-agreeing the shape of the rule, you know exactly what the catch limit will be, given the estimated status of the stock.
-This is easier than all the stakeholders and managers arguing about what the catch limit should be (which takes time and energy and can delay important decisions being made).</p>
+This is easier than all the stakeholders and managers arguing every time a catch limit needs to be set (which takes time and energy and can delay important decisions being made).
+Choosing the right HCR is obviously very important.</p>
 <p>The shape of this HCR is determined by 4 parameters: <em>Blim</em>, <em>Belbow</em>, <em>Cmin</em> and <em>Cmax</em>, shown in blue in the figure.
 <em>Cmin</em> and <em>Cmax</em> determine the minimum and maximum catch limit.
 <em>Blim</em> and <em>Belbow</em> determine the minimum and maximum biomass of the sloping section.</p>
@@ -381,7 +377,7 @@ When stock biomass is less than <em>Blim</em> the catch limit is set at minimum 
 When stock biomass is between <em>Blim</em> and <em>Belbow</em> the catch limit is set according to where it lies on the slope.</p>
 <p><strong>Important note about management procedures</strong>.
 An HCR is part of a management procedure (MP), along with two other elements: the data collection and the estimation process.
-Under the harvest strategy approach, when an MP is agreed and adopted by stakeholders all three elements of the MP are agreed together.
+Under a harvest strategy approach, when an MP is agreed and adopted by stakeholders all three elements of the MP are agreed together.
 In this tutorial, and in the app, we assume that the data collection and estimation process are the same for each HCR that we try.
 When we talk about comparing HCRs we are really comparing MPs.</p>
 </div>
@@ -406,7 +402,7 @@ Remember that the biomass is scaled between 0 and 1, where 1 is the unfished sto
 <p>There are two horizontal dashed lines on the biomass plot. The higher one, at 0.5, is the Target Reference Point (TRP).
 The TRP is a management objective. Ideally, the stock biomass should be close to this line.</p>
 <p>The lower horizontal line, at 0.2, is the Limit Reference Point (LRP).
-If the stock biomass falls below this level the stock will have trouble reproducing and may be in serious trouble.</p>
+If the stock biomass falls below this level the stock is considered to be overfished and may be in serious trouble.</p>
 <p>The HCR is shown in the top-right panel. It is the red line (ignore the blue dashed lines for the moment).
 As mentioned above, the shape of the HCR is determined by 4 parameters: <em>Blim</em>, <em>Belbow</em>, <em>Cmin</em> and <em>Cmax</em>.
 The HCR parameter values can be controlled using the sliders on the left-hand side of the screen.</p>
@@ -418,7 +414,8 @@ We will refer to this HCR as <em>HCR 1</em>.</p>
 </div>
 <div id="using-the-hcr" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Using the HCR</h1>
-<p>The purpose of the HCR is to set the catch limit each year. The HCR uses the current estimated value of stock biomass to set the next catch limit.
+<p>The purpose of the HCR is to set the catch limit each year.
+The HCR uses the current estimated value of stock biomass to set the next catch limit.
 This rule will be applied every year in the future to set new catch limits in each year.</p>
 <p>We start at the very beginning of 2020 and we want to use <em>HCR 1</em> to set the catch limit for 2020.
 The stock biomass can be seen in the bottom-left plot.</p>
@@ -436,7 +433,7 @@ This represents what the catches <em>will</em> be in 2020.</p>
 <ul>
 <li>The catch limit that was set by the HCR for 2020 has been used by the fishery. In the catch plot you should see that the catch in the year 2020 has reached this catch limit.</li>
 <li>The stock has responded to being fished in 2020. You should see that we now have an extra year in the biomass plot up to 2021.</li>
-<li>The start of the blue arrow to the right of the biomass plot has moved up or down to reflect the new current estimate of biomass. The blue vertical dashed line on the HCR plot has moved left or right as well.</li>
+<li>The shape of the blue arrow to the right of the biomass plot has shifted to reflect the new current estimate of biomass. The blue vertical dashed line on the HCR plot has moved left or right as well.</li>
 <li>The HCR has used this new value of biomass to set a new catch limit for 2021 (this may be the same value as the previous catch limit).</li>
 </ul>
 <div class="figure"><span style="display:block;" id="fig:advance"></span>
@@ -445,7 +442,8 @@ This represents what the catches <em>will</em> be in 2020.</p>
 Figure 4.1: After pressing Advance a single time, fishing has occurred in 2020 using the catch limit that was set by the HCR. The stock biomass has been affected by the new catch limit. The HCR uses the estimate of stock biomass at the start of 2021 to set the catch limit for 2021.
 </p>
 </div>
-<p>Press the <strong>Advance</strong> button again. The catch limit that was set for 2021 is used by the fishery. The stock responds to being fished again and we have a new estimate biomass for the beginning of 2022. This new estimate of biomass is again used by the HCR to set the new catch limit for 2022 (the blue arrow will move again to reflect this).</p>
+<p>Press the <strong>Advance</strong> button again. The catch limit that was set for 2021 is used by the fishery. The stock responds to being fished again and we have a new estimate of biomass for the beginning of 2022.
+This new estimate of biomass is again used by the HCR to set the new catch limit for 2022 (the blue arrow will move again to reflect this).</p>
 <p>Keep pressing the <strong>Advance</strong> button until you get to the end of the projection (in 2040).
 You should see the cycle:</p>
 <ul>
@@ -473,16 +471,16 @@ For example, what is biggest change in catch that you see?</p>
 <p>Different HCRs behave in different ways and some are better at achieving management objectives than others.
 The parameters of the HCR that we just tried are: <em>Blim</em> = 0.2, <em>Belbow</em> = 0.5, <em>Cmin</em> = 10 and <em>Cmax</em> = 140.
 <!--  Final catch = 100 Final B = 0.4 When does it settle: 10 yrs--></p>
-<p>Here we try a different HCR.
+<p>Now we try a different HCR.
 The general ‘hockey stick’ shape will be the same, but we will use different HCR parameters by changing the HCR parameters in the left panel.</p>
 <p>Change <em>Belbow</em> to be 0.3 and <em>Cmax</em> to 130. Keep the other two parameters the same.
 We will refer to this HCR as <em>HCR 2</em>.
 You should see that the HCR plot has been updated to show the new shape of the HCR.</p>
 <p>Notice that this HCR has a lower maximum catch limit than the previous HCR.
-However, this limit will only be set if the biomass is greater than 0.3 (the value of <em>Belbow</em>).</p>
+This limit will be set if the biomass is greater than 0.3 (the value of <em>Belbow</em>).</p>
 <p>As before, repeatedly press the <strong>Advance</strong> button and follow the evolution of the stock and the catches (Figure <a href="#fig:hcr2">5.1</a>).
-Note how the behaviour of the catch and biomass are different to the initial example with <em>HCR 1</em> (Figure <a href="#fig:hcr1">4.2</a>).
-The biology of the fish stock is <em>exactly</em> the same as the example we ran earlier with <em>HCR 1</em>.
+Note how the behaviour of the catch and biomass are different to the initial example with <em>HCR 1</em> (Figure <a href="#fig:hcr1">4.2</a>).</p>
+<p>The biology of the fish stock is <em>exactly</em> the same as the example we ran earlier with <em>HCR 1</em>.
 The <em>only</em> difference between the two projections is the shape of the HCR used to set future catch limits.</p>
 <p>As before, write down the final values and any observations in the table at the end of this section.</p>
 <div class="figure"><span style="display:block;" id="fig:hcr2"></span>
@@ -546,14 +544,14 @@ Figure 5.2: The results of running a full projection with HCR 3.
 <div id="introducing-uncertainty" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Introducing uncertainty</h1>
 <p>In the real world fisheries management is affected by different types of uncertainty.
-By uncertainty, we mean things that we are not completely sure about, for example the exact status of the stock, and also things that are predict in the future, for example future recruitment.</p>
+By uncertainty, we mean things that we are not completely sure about, for example the exact status of the stock, and also things that are difficult to predict in the future, for example future recruitment.</p>
 <p>The projections we have run so far have not considered uncertainty (they are known as <em>deterministic</em> simulations).
-This means that if we run another projection with the same HCR, the outcome will be the same.
+This means that if we run another projection with the same HCR, the outcome will be exactly the same.
 Try this now and see.</p>
 <p>It is very important to choose an HCR that is robust to different sources of uncertainty, otherwise the outcome may not be what you expected.
 For example, an HCR that performs well when future stock recruitment is stable may not perform well when stock recruitment varies a lot.
 We will look at this here.</p>
-<p>Uncertainty is included in the app in two ways: biological variability in the stock dynamics (e.g. natural variability in recruitment) and through differences between the estimated level of stock biomass and the ‘true’ level.</p>
+<p>Uncertainty is included in the app in two ways: biological variability in the stock dynamics (e.g. natural variability in recruitment) and through differences between the estimated and ‘true’ level of stock biomass.</p>
 <p>These options are initially turned off.
 Click on the <strong>Show variability option</strong> option in the panel on the left to show the uncertainty options.</p>
 <div id="biological-variability" class="section level2" number="6.1">
@@ -576,7 +574,8 @@ This causes fluctuations in the population abundance.</p>
 Figure 6.1: The results of running a full projection of HCR 1 with biological variability (note that your plot may look different).
 </p>
 </div>
-<p>As the HCR uses the estimate of biomass to set the catch limit, it means that the catch limit set by the HCR also bounces around. The catch limits set by the HCR then go onto affect the stock biomass in the same way as before.</p>
+<p>As the HCR uses the estimate of biomass to set the catch limit, it means that the catch limit set by the HCR also bounces around.
+The catch limits set by the HCR then go onto affect the stock biomass in the same way as before.</p>
 <p>If you press the <strong>Reset</strong> button and run the projection again you should see that you get a different trajectory (uncertainty in action!).</p>
 <p>Different HCRs respond differently to biological variability.
 Try the following to see:</p>
@@ -590,7 +589,7 @@ Try the following to see:</p>
 <h2><span class="header-section-number">6.2</span> Estimation error</h2>
 <p>In the real world we do not know the true stock abundance.
 This means that a HCR is not driven by the <em>true</em> value of biomass. Instead it is driven by an <em>estimated</em> value (we can never know the true value).
-For example, biomass can be estimated by using a stock assessment model.
+For example, the biomass can be estimated by a stock assessment model.
 The HCR therefore uses an <em>estimated</em> value of the stock biomass to set the next catch limit, not the <em>true</em> value.
 The difference between the estimated and true value of biomass is called the estimation error and it can have an important impact on the performance of a HCR.</p>
 <p>Here estimation error is simulated in two ways: <em>variability</em> and <em>bias</em>. These can be combined.</p>
@@ -599,16 +598,16 @@ This estimation variability is a crude way of simulating that we don’t really 
 Project the stock forward several times using the <strong>Advance</strong> button.</p>
 <p>You should see that the biomass plot now shows two lines. The black one is the <em>true</em> abundance and the blue one is the <em>estimated</em> abundance.
 It is the estimated abundance that is used by the HCR to set the catch limit.</p>
-<p>You should see that the stock and catch bounce around as you project forward. This variability is not caused by any biological variability (you have turned that off) but from the HCR using the <em>estimated</em> value of biomass to set the catch limit.
+<p>You should see that the stock and catch bounce around as you project forward. This variability is not caused by any biological variability (you have turned that off) but from the HCR using the uncertain <em>estimated</em> value of biomass to set the catch limit.
 The catch limit, of course, affects the <em>real</em> stock abundance.</p>
 <p>If you press <strong>Reset</strong> and run the same projection again by pressing <strong>Advance</strong> you should see a slightly different outcome. Try it.</p>
 <p>Now turn the <strong>Estimation variability</strong> back to 0 and set the <strong>Estimation bias</strong> to 0.1.
-This means that the estimated value of SB/SBF=0 is always 10% higher than the true value, i.e. we are always overestimating the stock abundance.</p>
-<p>Project forward and see what happens. Compare the <em>true</em> final values of SB/SBF=0 (the black line on the plot) and catch to the numbers you wrote down in the table above for the first HCR.
+This means that the estimated value of biomass is always 10% higher than the true value, i.e. we are always overestimating the stock abundance.</p>
+<p>Project forward and see what happens. Compare the <em>true</em> final values of biomass (the black line on the plot) and catch to the numbers you wrote down in the table above for the first HCR.
 Are the final values higher or lower than when there is no bias?
 <!-- I get lower values than when no bias --></p>
 <p>In the real world, both biological variability and estimation error are operating at the same time.
-It is very important that the selected HCR is robust to this uncertainty at that the management objectives can be achieved.</p>
+It is very important that the selected HCR is robust to this uncertainty so that the management objectives can be achieved.</p>
 </div>
 </div>
 <div id="summary" class="section level1" number="7">
@@ -618,7 +617,7 @@ In this app, the input to the rule is the <em>estimated</em> stock biomass and t
 <p>We have looked at three different HCRs and seen that they perform differently.</p>
 <p>Uncertainty is a big concern in fisheries management.
 Here we looked at biological and estimation uncertainty.
-We have seen that they can change the performance of the fishery.
+We have seen that they can change the performance of the HCR and the fishery.
 It is very important that an HCR is robust to uncertainty.
 A HCR that performs well in the absence of uncertainty may not perform as well when uncertainty is present.</p>
 <p>The big question is: how do we know which HCR to use?

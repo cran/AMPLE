@@ -15,7 +15,8 @@ sidebar_setup <- function(...){
   sb <- sidebarPanel(
             width=3,
             br(),
-            img(src = "img/spc.png", height = 100),
+            # Dynamically resize SPC logo to side bar width
+            img(src = "img/spc.png", width= "60%"), 
             br(),
             br(),
             br(),
