@@ -28,6 +28,7 @@
 #' @docType package
 #' @rdname ample
 #' @name AMPLE
-
+#' @keywords internal 
+"_PACKAGE"
 NULL
 #> NULL

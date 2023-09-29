@@ -3,6 +3,7 @@
 \docType{package}
 \name{AMPLE}
 \alias{AMPLE}
+\alias{AMPLE-package}
 \title{AMPLE: A package of Shiny apps that introduce Harvest Control Rules (HCR) for fisheries management.}
 \description{
 AMPLE provides three Shiny apps that introduce Harvest Control Rules (HCR) for fisheries management.
@@ -28,3 +29,20 @@ With thanks to Andre Punt.
 Also thanks to Winston Chang for help with the R6 class / Shiny reactivity.
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/PacificCommunity/ofp-sam-ample}
+}
+
+}
+\author{
+\strong{Maintainer}: Finlay Scott \email{finlays@spc.int} (\href{https://orcid.org/0000-0001-9950-9023}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Pacific Community (SPC) [copyright holder]
+}
+
+}
+\keyword{internal}
